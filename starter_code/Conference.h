@@ -96,11 +96,11 @@ public:
 
     /** self defined
      */
-    int Conference::getTotalPapers();
+    int getTotalPapers();
     int getPaperId(int trackIndex, int sessionIndex, int paperIndex);
     int getPaperId(int paperNum);
     void setPaper(int paperNum, int paperId);
-    int* cumulativeIndexToCordinate(int cI);
+    vector<int> cumulativeIndexToCordinate(int cI);
 };
 
 #endif	/* CONFERENCE_H */

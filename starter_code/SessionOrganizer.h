@@ -85,8 +85,8 @@ public:
      */
     void randomStartStateGenerator();
     bool randomGreedyWalk(int n, int p, int t, int k);
-    void swapPaper(int firstIndex, int secondIndex, int* values);
-    int* swappedScore(int first, int second);
+    void swapPaper(int firstIndex, int secondIndex, vector<double> values);
+    vector<double> swappedScore(int first, int second);
 };
 
 #endif	/* SESSIONORGANIZER_H */
