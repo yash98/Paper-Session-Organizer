@@ -5,6 +5,7 @@
  */
 
 #include <cstdlib>
+#include <ctime>
 
 #include "SessionOrganizer.h"
 
@@ -15,6 +16,7 @@ using namespace std;
  */
 int main ( int argc, char** argv )
 {
+    clock_t start = clock();
     // Parse the input.
     if ( argc < 3 )
     {   
@@ -29,9 +31,9 @@ int main ( int argc, char** argv )
     SessionOrganizer *organizer  = new SessionOrganizer( inputfilename );
 
     // Organize the papers into tracks based on similarity.
-    organizer->organizePapers ( );
+    organizer->organizePapers(start);
 
-    organizer->printSessionOrganiser ( argv[2]);
+    organizer->printSessionOrganiser(argv[2]);
 
     // Score the organization against the gold standard.
     double score = organizer->scoreOrganization ( );

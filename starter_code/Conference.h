@@ -27,6 +27,10 @@ private:
 
     // The number of papers in a session.
     int papersInSession;
+
+    // The number of total papers in a conference.
+    int totalPapers;
+
 public:
     Conference();
     
@@ -89,6 +93,14 @@ public:
     
     
     void printConference(char *);
+
+    /** self defined
+     */
+    int Conference::getTotalPapers();
+    int getPaperId(int trackIndex, int sessionIndex, int paperIndex);
+    int getPaperId(int paperNum);
+    void setPaper(int paperNum, int paperId);
+    int* cumulativeIndexToCordinate(int cI);
 };
 
 #endif	/* CONFERENCE_H */

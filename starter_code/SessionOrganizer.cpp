@@ -4,6 +4,10 @@
  * 
  */
 
+#include <vector>
+#include <stdlib.h>
+#include <ctime>
+
 #include "SessionOrganizer.h"
 #include "Util.h"
 
@@ -22,20 +26,138 @@ SessionOrganizer::SessionOrganizer ( string filename )
     conference = new Conference ( parallelTracks, sessionsInTrack, papersInSession );
 }
 
-void SessionOrganizer::organizePapers ( )
+void SessionOrganizer::organizePapers (clock_t startTime)
 {
-    int paperCounter = 0;
+    
+}
+
+void SessionOrganizer::randomStartStateGenerator() 
+{
+    int paperCounter = 1;
+    int paperId;
+    int vectorIndex;
+    vector<int> randomPageList;
+    for (int i=0; i < conference->getTotalPapers(); i++) {
+        randomPageList.push_back(paperCounter);
+        paperCounter++;
+    }
     for ( int i = 0; i < conference->getSessionsInTrack ( ); i++ )
     {
         for ( int j = 0; j < conference->getParallelTracks ( ); j++ )
         {
             for ( int k = 0; k < conference->getPapersInSession ( ); k++ )
             {
-                conference->setPaper ( j, i, k, paperCounter );
-                paperCounter++;
+                vectorIndex = rand() % paperCounter;
+                paperId = randomPageList.at(vectorIndex);
+                randomPageList.erase(randomPageList.begin() + vectorIndex);
+                conference->setPaper (j, i, k, paperId);
+                paperCounter--;
             }
         }
     }
+}
+
+bool SessionOrganizer::randomGreedyWalk(int n, int p, int t, int k)
+{
+    int n1 = rand() % n;
+    int n2 = rand() % (n-k);
+    int n1Floor = n1 - (n1%k);
+    if (n2>n1Floor) {
+        n2 += k;
+    }
+    int * retScoreAndValues = swappedScore(n1, n2);
+    if (*retScoreAndValues>0) {
+        retScoreAndValues++;
+        swapPaper(n1, n2, retScoreAndValues);
+        return true;
+    }
+    return false;
+}
+
+void SessionOrganizer::swapPaper(int firstIndex, int secondIndex, int* values)
+{
+    conference->setPaper(firstIndex, *values);
+    conference->setPaper(secondIndex, *(values+1));
+}
+
+int* SessionOrganizer::swappedScore(int first, int second)
+{
+    int firstValue = conference->getPaperId(first);
+    int secondValue = conference->getPaperId(second);
+    int* firstPtr = conference->cumulativeIndexToCordinate(first);
+    int* secondPtr = conference->cumulativeIndexToCordinate(second);
+    int p1 = *firstPtr;
+    int t1 = *(firstPtr+1);
+    int k1 = *(firstPtr+2);
+    int p2 = *secondPtr;
+    int t2 = *(secondPtr+1);
+    int k2 = *(secondPtr+2);
+
+    // new similar cost
+    // differences new-old same session similarity
+    double score1 = 0.0;
+
+    // Sum of distances for competing papers.
+    double score2 = 0.0;
+    for ( int i = 0; i < conference->getParallelTracks ( ); i++ )
+    {   
+        if (i != p1) {
+            Track tmpTrack1 = conference->getTrack ( i );
+            Session tmpSession1 = tmpTrack1.getSession ( t1 );
+            int indexOld = firstValue;
+            int indexNew = secondValue;
+            for ( int k = 0; k < tmpSession1.getNumberOfPapers ( ); k++ )
+            {
+                int index2 = tmpSession1.getPaper ( k );
+                score2 += distanceMatrix[indexNew][index2] - distanceMatrix[indexOld][index2];
+            }
+        } else {
+            Track tmpTrack = conference->getTrack ( p1 );
+            Session tmpSession = tmpTrack.getSession ( t1 );
+            int indexOld = firstValue;
+            int indexNew = secondValue;
+            for ( int i = 0; i < tmpSession.getNumberOfPapers ( ); i++ )
+            {   
+                if (i != k1) {
+                    int index2 = tmpSession.getPaper ( i );
+                    score1 += distanceMatrix[indexOld][index2] - distanceMatrix[indexNew][index2] ;
+                }
+            }
+        }
+    }
+
+    for ( int i = 0; i < conference->getParallelTracks ( ); i++ )
+    {   
+        if (i != p2) {
+            Track tmpTrack1 = conference->getTrack ( i );
+            Session tmpSession1 = tmpTrack1.getSession ( t2 );
+            int indexOld = firstValue;
+            int indexNew = secondValue;
+            for ( int k = 0; k < tmpSession1.getNumberOfPapers ( ); k++ )
+            {
+                int index2 = tmpSession1.getPaper ( k );
+                score2 += distanceMatrix[indexNew][index2] - distanceMatrix[indexOld][index2];
+            }
+        } else {
+            Track tmpTrack = conference->getTrack ( p2 );
+            Session tmpSession = tmpTrack.getSession ( t2 );
+            int indexOld = firstValue;
+            int indexNew = secondValue;
+            for ( int i = 0; i < tmpSession.getNumberOfPapers ( ); i++ )
+            {   
+                if (i != k2) {
+                    int index2 = tmpSession.getPaper ( i );
+                    score1 += distanceMatrix[indexOld][index2] - distanceMatrix[indexNew][index2] ;
+                }
+            }
+        }
+    }
+    double diffInScore = score1 + tradeoffCoefficient*score2;
+    int arr[3];
+    arr[0] = diffInScore;
+    arr[1] = firstValue;
+    arr[2] = secondValue;
+    return arr;
 }
 
 void SessionOrganizer::readInInputFile ( string filename )
