@@ -36,9 +36,10 @@ void SessionOrganizer::organizePapers (clock_t startTime)
     int t = conference->getSessionsInTrack();
     int k = conference->getPapersInSession();
     while(timeAvailable > current-startTime) {
-        cout << randomGreedyWalk(n, p, t, k) << endl;
+        randomGreedyWalk(n, p, t, k);
+        // cout <<  << endl;
         current = clock();
-        cout << (timeAvailable - current + startTime)/CLOCKS_PER_SEC << endl;
+        // cout << (timeAvailable - current + startTime)/CLOCKS_PER_SEC << endl;
     }
 }
 
@@ -73,12 +74,12 @@ bool SessionOrganizer::randomGreedyWalk(int n, int p, int t, int k)
     int n1 = rand() % n;
     int n2 = rand() % (n-k);
     int n1Floor = n1 - (n1%k);
-    if (n2>n1Floor) {
+    if (n2>=n1Floor) {
         n2 += k;
     }
     vector<double> retScoreAndValues = swappedScore(n1, n2);
-    cout << retScoreAndValues[0] << " , " << n1 << " , " << n2 << endl;
-    if (retScoreAndValues[0]>0) {
+    // cout << retScoreAndValues[0] << " , " << n1 << " , " << n2 << endl;
+    if (retScoreAndValues[0]>=0) {
         swapPaper(n1, n2, retScoreAndValues);
         return true;
     }

@@ -92,7 +92,7 @@ int Conference::getPaperId(int paperNum)
     int t = sessionsInTrack;
     int k = papersInSession;
     int k1 = paperNum%k;
-    int t1 = (paperNum%(k*t)) - k1;
+    int t1 = ((paperNum/k)%t);
     int p1 = paperNum/(k*t);
     getPaperId(p1, t1, k1);
 }
@@ -116,7 +116,7 @@ void Conference::setPaper(int paperNum, int paperId)
     int t = sessionsInTrack;
     int k = papersInSession;
     int k1 = paperNum%k;
-    int t1 = (paperNum%(k*t)) - k1;
+    int t1 = ((paperNum/k)%t);
     int p1 = paperNum/(k*t);
     setPaper(p1, t1, k1, paperId);
 }
@@ -127,7 +127,7 @@ vector<int> Conference::cumulativeIndexToCordinate(int cI)
     int t = sessionsInTrack;
     int k = papersInSession;
     arr.push_back(cI%k);
-    arr.push_back((cI%(k*t)) - arr[0]);
+    arr.push_back((cI/k)%t);
     arr.push_back(cI/(k*t));
     return arr;
 }
