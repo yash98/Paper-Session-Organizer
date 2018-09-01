@@ -101,6 +101,7 @@ public:
     int getPaperId(int paperNum);
     void setPaper(int paperNum, int paperId);
     vector<int> cumulativeIndexToCordinate(int cI);
+    void printConference();
 };
 
 #endif	/* CONFERENCE_H */

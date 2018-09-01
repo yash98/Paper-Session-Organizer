@@ -87,6 +87,7 @@ public:
     bool randomGreedyWalk(int n, int p, int t, int k);
     void swapPaper(int firstIndex, int secondIndex, vector<double> values);
     vector<double> swappedScore(int first, int second);
+    vector<int> greedyFirstBest(int n, int p, int t, int k, vector<int> start);
 };
 
 #endif	/* SESSIONORGANIZER_H */

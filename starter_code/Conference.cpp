@@ -132,6 +132,25 @@ vector<int> Conference::cumulativeIndexToCordinate(int cI)
     return arr;
 }
 
+void Conference::printConference ()
+{
+    for ( int i = 0; i < sessionsInTrack; i++ )
+    {
+        for ( int j = 0; j < parallelTracks; j++ )
+        {
+            for ( int k = 0; k < papersInSession; k++ )
+            {
+                cout<< tracks[j].getSession ( i ).getPaper ( k ) << " ";
+            }
+            if ( j != parallelTracks - 1 )
+            {
+                cout<<"| ";
+            }
+        }
+        cout<<"\n";
+    }
+}
+
 void Conference::printConference (char * filename )
 {
     ofstream ofile(filename);

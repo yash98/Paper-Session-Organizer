@@ -143,8 +143,8 @@ vector<double> SessionOrganizer::swappedScore(int first, int second)
         if (i != p2) {
             Track tmpTrack1 = conference->getTrack ( i );
             Session tmpSession1 = tmpTrack1.getSession ( t2 );
-            int indexOld = firstValue;
-            int indexNew = secondValue;
+            int indexOld = secondValue;
+            int indexNew = firstValue;
             for ( int k = 0; k < tmpSession1.getNumberOfPapers ( ); k++ )
             {
                 int index2 = tmpSession1.getPaper ( k );
@@ -153,8 +153,8 @@ vector<double> SessionOrganizer::swappedScore(int first, int second)
         } else {
             Track tmpTrack = conference->getTrack ( p2 );
             Session tmpSession = tmpTrack.getSession ( t2 );
-            int indexOld = firstValue;
-            int indexNew = secondValue;
+            int indexOld = secondValue;
+            int indexNew = firstValue;
             for ( int k = 0; k < tmpSession.getNumberOfPapers ( ); k++ )
             {   
                 if (k != k2) {
