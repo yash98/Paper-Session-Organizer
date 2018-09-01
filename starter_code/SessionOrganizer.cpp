@@ -26,21 +26,52 @@ SessionOrganizer::SessionOrganizer ( string filename )
     conference = new Conference ( parallelTracks, sessionsInTrack, papersInSession );
 }
 
-void SessionOrganizer::organizePapers (clock_t startTime)
+void SessionOrganizer::organizePapers (clock_t startTime, char * outFile)
 {
     double timeAvailable = (60*processingTimeInMinutes - 1)*CLOCKS_PER_SEC;
+    bool b = true;
+    double maxScore = 0;
     randomStartStateGenerator();
     clock_t current = clock();
     int n = conference->getTotalPapers();
     int p = conference->getParallelTracks();
     int t = conference->getSessionsInTrack();
     int k = conference->getPapersInSession();
+    int countRandom = 0;
     while(timeAvailable > current-startTime) {
-        randomGreedyWalk(n, p, t, k);
+        if (countRandom < n*(n-k)) {
+            if (randomGreedyWalk(n, p, t, k)) {
+                // cout << countRandom << endl;
+                countRandom = 0;
+            } else {
+                countRandom++;
+            }
+        } else if (b) {
+            b = greedyFirstBest(n, p, t, k);
+            // cout << scoreOrganization() << " systematic " << b << endl;
+        } else {
+            b = true;
+            countRandom = 0;
+            double tempScore;
+            tempScore = scoreOrganization();
+            if (tempScore>maxScore) {
+                printSessionOrganiser(outFile);
+                maxScore = tempScore;
+            }
+            // cout << "restart" << endl;
+            randomStartStateGenerator();
+        }
         // cout <<  << endl;
         current = clock();
         // cout << (timeAvailable - current + startTime)/CLOCKS_PER_SEC << endl;
     }
+    double tempScore;
+    tempScore = scoreOrganization();
+    if (tempScore>maxScore) {
+        printSessionOrganiser(outFile);
+        maxScore = tempScore;
+    }
+    cout<< "score:"<<maxScore<<endl;
 }
 
 void SessionOrganizer::randomStartStateGenerator() 
@@ -81,9 +112,33 @@ bool SessionOrganizer::randomGreedyWalk(int n, int p, int t, int k)
     // cout << retScoreAndValues[0] << " , " << n1 << " , " << n2 << endl;
     if (retScoreAndValues[0]>=0) {
         swapPaper(n1, n2, retScoreAndValues);
+        // conference->printConference();
+        // cout << endl << scoreOrganization() << endl;
         return true;
     }
     return false;
+}
+
+bool SessionOrganizer::greedyFirstBest(int n, int p, int t, int k) 
+{
+    bool b = false;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n-k; j++) {
+            int n1Floor = i - (i%k);
+            if (j>=n1Floor) {
+                j += k;
+            }
+            vector<double> retScoreAndValues = swappedScore(i, j);
+            // cout << retScoreAndValues[0] << " , " << n1 << " , " << n2 << endl;
+            if (retScoreAndValues[0]>=0) {
+                swapPaper(i, j, retScoreAndValues);
+                // conference->printConference();
+                // cout << endl << scoreOrganization() << endl;
+                b = true;
+            }
+        }
+    }
+    return b;
 }
 
 void SessionOrganizer::swapPaper(int firstIndex, int secondIndex, vector<double> values)

@@ -59,7 +59,7 @@ public:
     /**
      * Organize the papers according to some algorithm.
      */
-    void organizePapers(clock_t t);
+    void organizePapers(clock_t t, char * outFile);
     
     
     /**
@@ -87,7 +87,7 @@ public:
     bool randomGreedyWalk(int n, int p, int t, int k);
     void swapPaper(int firstIndex, int secondIndex, vector<double> values);
     vector<double> swappedScore(int first, int second);
-    vector<int> greedyFirstBest(int n, int p, int t, int k, vector<int> start);
+    bool greedyFirstBest(int n, int p, int t, int k);
 };
 
 #endif	/* SESSIONORGANIZER_H */

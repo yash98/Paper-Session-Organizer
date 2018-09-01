@@ -31,13 +31,10 @@ int main ( int argc, char** argv )
     SessionOrganizer *organizer  = new SessionOrganizer( inputfilename );
 
     // Organize the papers into tracks based on similarity.
-    organizer->organizePapers(start);
-
-    organizer->printSessionOrganiser(argv[2]);
+    organizer->organizePapers(start, argv[2]);
 
     // Score the organization against the gold standard.
     double score = organizer->scoreOrganization ( );
-    cout<< "score:"<<score<<endl;
 
     return 0;
 }
